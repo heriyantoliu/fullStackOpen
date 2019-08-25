@@ -1,0 +1,8 @@
+note over browser:
+push the text that just input into notes array
+and renders the notes for display again
+after that send new note into the server
+using HTTP POST
+end note
+browser->server: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+server-->browser: {"message":"note created"}
