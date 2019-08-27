@@ -50,6 +50,16 @@ const App = () => {
 			setNewNumber('');
 		});
 	};
+
+	const handleDelete = id => {
+		const person = persons.find(person => person.id === id);
+		var delConfirm = window.confirm(`Delete ${person.name} ?`);
+		if (delConfirm) {
+			personService.delObject(id).then(returnedPerson => {
+				setPersons(persons.filter(person => person.id !== id));
+			});
+		}
+	};
 	return (
 		<div>
 			<h2>Phonebook</h2>
@@ -63,7 +73,7 @@ const App = () => {
 				handleNewNumber={handleNewNumber}
 			/>
 			<h2>Numbers</h2>
-			<Person persons={personToShow} />
+			<Person persons={personToShow} handleDelete={handleDelete} />
 		</div>
 	);
 };
