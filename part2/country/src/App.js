@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const ListCountry = ({ countries }) => {
+const ListCountry = ({ countries, showCountry }) => {
 	const countriesLength = countries.length;
+
 	if (countriesLength > 10) {
 		return <p>Too many matches, specify another filter</p>;
 	} else if (countriesLength !== 1) {
 		return countries.map(country => (
-			<div key={country.name}>{country.name}</div>
+			<div key={country.name}>
+				{country.name}
+				<button onClick={() => showCountry(country.name)}>Show</button>
+			</div>
 		));
 	}
 	return <Country country={countries[0]} />;
@@ -46,8 +50,6 @@ const App = () => {
 					country.name.toLowerCase().match(find.toLowerCase())
 			  );
 
-	console.log(countriesDisplay.length);
-
 	const handleFind = event => {
 		setFind(event.target.value);
 	};
@@ -56,7 +58,7 @@ const App = () => {
 		<div>
 			find countries <input value={find} onChange={handleFind} />
 			<br />
-			<ListCountry countries={countriesDisplay} />
+			<ListCountry countries={countriesDisplay} showCountry={setFind} />
 		</div>
 	);
 };
