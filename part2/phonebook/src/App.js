@@ -6,12 +6,13 @@ import personService from './services/persons';
 import './index.css'
 
 const Notification = ({message}) => {
-	if (message === '') {
+	
+	if (message === undefined || message.text === '') {
 		return null
 	}
 	return (
-		<div className="success">
-			{message}
+		<div className={message.msgType}>
+			{message.text}
 		</div>
 	)
 }
@@ -21,7 +22,7 @@ const App = () => {
 	const [newName, setNewName] = useState('');
 	const [newNumber, setNewNumber] = useState('');
 	const [searchName, setSearchName] = useState('');
-	const [successMessage, setSuccessMessage] = useState('')
+	const [message, setMessage] = useState({text:'', msgType:''})
 
 	useEffect(() => {
 		personService.getAll().then(initialPersons => setPersons(initialPersons));
@@ -63,9 +64,12 @@ const App = () => {
 				number: newNumber
 			};
 			personService.update(found.id, updatePerson).then(returnedPerson => {
-				setSuccessMessage(`Updated ${newName}`)
+				setMessage({
+					text:`Updated ${newName}`,
+					msgType: 'success'
+				})
 				setTimeout(()=>{
-					setSuccessMessage('')
+					setMessage({text:'', msgType: ''})
 				},5000)
 				var copyPerson = [...persons];
 				var idx = copyPerson.findIndex(person => person.id === found.id);
@@ -73,6 +77,14 @@ const App = () => {
 				setPersons(copyPerson);
 				setNewName('');
 				setNewNumber('');
+			}).catch(error => {
+				setMessage({
+					text:`Information of ${newName} has already been removed from server`,
+					msgType: 'error'
+				})
+				setTimeout(()=>{
+					setMessage({text:'', msgType: ''})
+				},5000)
 			});
 			return;
 		}
@@ -81,9 +93,12 @@ const App = () => {
 			number: newNumber
 		};
 		personService.create(newPerson).then(returnedPerson => {
-			setSuccessMessage(`Added ${newName}`)
+			setMessage({
+				text:`Added ${newName}`,
+				msgType: 'success'
+			})			
 			setTimeout(()=>{
-				setSuccessMessage('')
+				setMessage({text:'', msgType: ''})
 			},5000)
 			setPersons(persons.concat(returnedPerson));
 			setNewName('');
@@ -97,14 +112,21 @@ const App = () => {
 		var delConfirm = window.confirm(`Delete ${person.name} ?`);
 		if (delConfirm) {
 			personService.delObject(id).then(returnedPerson => {
+				setMessage({
+					text:`Deleted ${person.name}`,
+					msgType: 'success'
+				})
+				setTimeout(()=>{
+					setMessage({text:'', msgType: ''})
+				},5000)
 				setPersons(persons.filter(person => person.id !== id));
-			});
+			})
 		}
 	};
 	return (
 		<div>
 			<h2>Phonebook</h2>
-			<Notification message={successMessage} />
+			<Notification message={message} />
 			<Filter handleSearch={handleSearchName} />
 			<h3>add a new</h3>
 			<PersonForm
