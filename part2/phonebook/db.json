@@ -22,13 +22,8 @@
     },
     {
       "name": "abc",
-      "number": "123-123",
+      "number": "345",
       "id": 5
-    },
-    {
-      "name": "def",
-      "number": "333",
-      "id": 6
     }
   ]
 }

@@ -3,12 +3,25 @@ import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Person from './components/Person';
 import personService from './services/persons';
+import './index.css'
+
+const Notification = ({message}) => {
+	if (message === '') {
+		return null
+	}
+	return (
+		<div className="success">
+			{message}
+		</div>
+	)
+}
 
 const App = () => {
 	const [persons, setPersons] = useState([]);
 	const [newName, setNewName] = useState('');
 	const [newNumber, setNewNumber] = useState('');
 	const [searchName, setSearchName] = useState('');
+	const [successMessage, setSuccessMessage] = useState('')
 
 	useEffect(() => {
 		personService.getAll().then(initialPersons => setPersons(initialPersons));
@@ -50,6 +63,10 @@ const App = () => {
 				number: newNumber
 			};
 			personService.update(found.id, updatePerson).then(returnedPerson => {
+				setSuccessMessage(`Updated ${newName}`)
+				setTimeout(()=>{
+					setSuccessMessage('')
+				},5000)
 				var copyPerson = [...persons];
 				var idx = copyPerson.findIndex(person => person.id === found.id);
 				copyPerson[idx].number = newNumber;
@@ -64,10 +81,15 @@ const App = () => {
 			number: newNumber
 		};
 		personService.create(newPerson).then(returnedPerson => {
+			setSuccessMessage(`Added ${newName}`)
+			setTimeout(()=>{
+				setSuccessMessage('')
+			},5000)
 			setPersons(persons.concat(returnedPerson));
 			setNewName('');
 			setNewNumber('');
 		});
+		
 	};
 
 	const handleDelete = id => {
@@ -82,6 +104,7 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>
+			<Notification message={successMessage} />
 			<Filter handleSearch={handleSearchName} />
 			<h3>add a new</h3>
 			<PersonForm
